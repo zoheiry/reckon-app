@@ -26,9 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
-    marginTop: '5%',
-    marginBottom: 25,
-    height: 40,
   },
   withBackButton: {
     justifyContent: 'space-between',

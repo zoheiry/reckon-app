@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'react-native';
+import { ScreenOrientation } from 'expo';
 
 import DefaultLayout from '../layouts/Default';
 import Start from '../screens/Start';
 import Players from '../screens/Players';
 import Teams from '../screens/Teams';
+import Words from '../screens/Words';
+import Play from '../screens/Play';
 
 import { getNextStep, getPrevStep } from '../utils/steps';
-import { START, PLAYERS, TEAMS, PLAY, SCORE, END } from '../constants/appStates';
+import { START, PLAYERS, TEAMS, WORDS, PLAY, SCORE, END } from '../constants/appStates';
+
+// const INITIAL_ORIENTATION = ScreenOrientation.OrientationLock.PORTRAIT;
+const INITIAL_ORIENTATION = ScreenOrientation.OrientationLock.LANDSCAPE;
 
 const Main = () => {
   const [step, setStep] = useState(START);
+  const [orientation, setOrientation] = useState(INITIAL_ORIENTATION);
   const [players, setPlayers] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [words, setWords] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      await ScreenOrientation.lockAsync(INITIAL_ORIENTATION);
+      ScreenOrientation.addOrientationChangeListener(({ orientationInfo }) => {
+        setOrientation(orientationInfo.orientation);
+      });
+    })();
+  }, []);
 
   const canGoToPrevStep = () => {
     return true;
@@ -37,11 +56,16 @@ const Main = () => {
   const handleSubmitPlayers = (playerNames) => {
     setPlayers(playerNames);
     goToNextStep();
-  }
+  };
 
-  const defaultLayoutProps = {
-    onBackPress: () => goToPrevStep(),
-    onSettingsPress: () => null,
+  const handleSubmitTeams = (teams) => {
+    setTeams(teams);
+    goToNextStep(); 
+  };
+
+  const handleSubmitWords = (words) => {
+    setWords(words);
+    goToNextStep();
   };
 
   let withBackButton = true;
@@ -50,18 +74,31 @@ const Main = () => {
     case START:
       withBackButton = false;
       // screenComponent = <Start onStart={goToNextStep} />;
-      screenComponent = <Teams players={['Ali', 'Omar', 'Mariem', 'Sally', '', '']} onStart={goToNextStep} />;
+      screenComponent = <Play teams={[['Ali', 'Mariem'], ['Omar', 'Sally']]} words={['Dog', 'Cat', 'Penguin', 'Lion', 'Goerge Clooney', 'Angelina Jolie', 'Gone with the wind', 'Lord of the rings']} />;
       break;
     case PLAYERS:
-      screenComponent = <Players onSubmit={handleSubmitPlayers}/>;
+      screenComponent = <Players onSubmit={handleSubmitPlayers} players={players} />;
       break;
     case TEAMS:
-      screenComponent = <Teams players={players} onStart={goToNextStep} />;
+      screenComponent = <Teams players={players} onSubmit={handleSubmitTeams} />;
+      break;
+    case WORDS:
+      screenComponent = <Words players={players} onSubmit={handleSubmitWords} />;
+      break;
+    case PLAY:
+      withBackButton = false;
+      screenComponent = <Play teams={teams} words={words} />;
       break;
   }
 
   return (
-    <DefaultLayout {...defaultLayoutProps} withBackButton={withBackButton}>
+    <DefaultLayout
+      onBackPress={goToPrevStep}
+      onSettingsPress={() => null}
+      withBackButton={withBackButton}
+      orientation={orientation}
+    >
+      <StatusBar hidden />
       {screenComponent}
     </DefaultLayout>
   );

@@ -2,19 +2,56 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Text, ScrollView, View, StyleSheet } from 'react-native';
 
-import Input from '../components/Input';
 import Wrapper from '../components/Wrapper';
 import Title from '../components/Title';
 import PlayerName from '../components/PlayerName';
+import CtaWrapper from '../components/CtaWrapper';
 import Button from '../components/Button';
-import Draggable from '../components/Draggable';
+import InfoText from '../components/InfoText';
+import HorizontalScrollView from '../components/HorizontalScrollView';
 
 const getPossibleNumberOfTeams = (numberOfPlayers) =>
   Array(Math.floor(numberOfPlayers / 2) - 1).fill({}).map((_, i) => i + 2);
 
-const Teams = ({ players = [] }) => {
+const renderPlayersList = (players = []) =>
+  <HorizontalScrollView>
+    {players.map((playerName, i) => (
+      <View style={styles.playerNameWrapper} key={`player-name-${i}`}>
+        <PlayerName>{playerName}</PlayerName>
+      </View>
+    ))}
+  </HorizontalScrollView>;
+
+const Teams = ({ players = [], onSubmit }) => {
   const possibleNumberOfTeams = getPossibleNumberOfTeams(players.length);
   const [numberOfTeams, setNumberOfTeams] = useState(0);
+  const [teamPlayers, setTeamPlayers] = useState([]);
+
+  const handleShuffleTeams = () => {
+    const playersClone = [...players];
+    let teamNumber = 0;
+    const randomTeamPlayers = Array(numberOfTeams).fill([]);
+
+    while (playersClone.length) {
+      const randomNumber = Math.floor(Math.random() * playersClone.length);
+      const randomPlayer = playersClone[randomNumber];
+      playersClone.splice(randomNumber, 1);
+      randomTeamPlayers[teamNumber] = [
+        ...randomTeamPlayers[teamNumber],
+        randomPlayer,
+      ];
+      teamNumber++;
+      if (teamNumber === numberOfTeams) {
+        teamNumber = 0;
+      }
+    }
+
+    setTeamPlayers(randomTeamPlayers);
+  }
+
+  const handleSubmit = () => {
+    onSubmit(teamPlayers);
+  }
 
   useEffect(() => {
     if (possibleNumberOfTeams.length === 1) {
@@ -22,31 +59,20 @@ const Teams = ({ players = [] }) => {
     }
   }, []);
 
-  const handleSubmitNumberOfTeams = ({ nativeEvent }) => {
-    setNumberOfTeams(nativeEvent.text);
-  }
-
   return (
     <Wrapper>
       <Title>Teams</Title>
-      {numberOfTeams ? <Text style={styles.infoText}>Drag and drop to pick teams</Text> : null}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.playersList}>
-        {players.map((playerName, i) => (
-          <View style={styles.playerNameWrapper} key={`player-name-${i}`}>
-            <PlayerName>{playerName}</PlayerName>
-          </View>
-        ))}
-      </ScrollView>
+      {!teamPlayers.length && renderPlayersList(players)}
       {!numberOfTeams ? (
         <View style={styles.numberOfTeams}>
-          <Text style={[styles.infoText, styles.label]}>Select number of teams</Text>
+          <InfoText>Select number of teams</InfoText>
           <View style={styles.buttonsWrapper}>
             {possibleNumberOfTeams.map(number => (
               <Button
                 key={`select-teams-${number}`}
-                size="sm"
+                size="md"
                 onPress={() => setNumberOfTeams(number)}
-                appearance="secondary"
+                appearance="success"
                 wrapperStyle={styles.teamsCountButton}
               >
                 {number}
@@ -56,12 +82,18 @@ const Teams = ({ players = [] }) => {
         </View>
       ) : (
         <View style={styles.teamsWrapper}>
-          {Array(numberOfTeams).fill({}).map((_, i) => (
-            <View key={`team-wrapper-${i}`}>
-              <Text style={styles.teamTitle}>Team {i + 1}</Text>
-              <Text style={styles.dropBox}>DROP HERE</Text>
-            </View>
-          ))}
+          <ScrollView showsVerticalScrollIndicator={false} style={styles.wrapper} contentContainerStyle={styles.wrapperContent}>
+            {Array(numberOfTeams).fill({}).map((_, i) => (
+              <View key={`team-wrapper-${i}`} style={styles.teamArea}>
+                <Text style={styles.teamTitle}>Team {i + 1}</Text>
+                {renderPlayersList(teamPlayers[i])}
+              </View>
+            ))}
+          </ScrollView>
+          <CtaWrapper style={styles.ctaButtons}>
+            <Button appearance="secondary" onPress={handleShuffleTeams}>Shuffle Teams</Button>
+            <Button onPress={handleSubmit} disabled={!teamPlayers.length}>Next</Button>
+          </CtaWrapper>
         </View>
       )}
     </Wrapper>
@@ -69,54 +101,64 @@ const Teams = ({ players = [] }) => {
 };
 
 const styles = StyleSheet.create({
-  infoText: {
-    fontFamily: 'montserrat-bold',
+  wrapper: {
+    flex: 1,
+    flexGrow: 1,
     textAlign: 'center',
-    fontSize: 16,
-    marginTop: 10,
-    color: '#ff6d4b',
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1
+    width: '100%',
+  },
+  wrapperContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    flexGrow: 1,
   },
   playersList: {
     flexGrow: 0,
   },
   playerNameWrapper: {
     marginRight: 10,
-    marginTop: 20,
   },
   numberOfTeams: {
     width: '100%',
     marginTop: 50,
-  },
-  label: {
-    marginBottom: 5,
-    marginLeft: 10,
   },
   buttonsWrapper: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  ctaButtons: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   teamsCountButton: {
     marginRight: 10,
   },
   teamsWrapper: {
-    paddingVertical: 50,
     flex: 1,
-    justifyContent: 'space-between',
+    width: '100%',
+  },
+  teamArea: {
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   teamTitle: {
     fontSize: 36,
+    marginBottom: 10,
     fontFamily: 'numpty-regular',
     color: '#000',
     textAlign: 'center',
   },
   dropBox: {
     fontFamily: 'montserrat-bold',
+    textAlign: 'center',
     fontSize: 20,
     marginTop: 20,
+    width: 200,
     borderWidth: 4,
     borderColor: '#000',
     borderStyle: 'dotted',
@@ -128,6 +170,7 @@ const styles = StyleSheet.create({
 
 Teams.propTypes = {
   players: PropTypes.array.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default Teams;

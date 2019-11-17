@@ -2,21 +2,40 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, StyleSheet, View, Image } from 'react-native';
 
-const Input = ({ onChangeText, value, style, ...props }) => {
+const getStainSourceForAppearance = (appearance) => {
+  switch (appearance) {
+    case 'primary':
+      return require('../../assets/images/inputStain1.png');
+    case 'secondary':
+      return require('../../assets/images/inputStain2.png')
+    case 'success':
+      return require('../../assets/images/inputStain3.png')
+  }
+}
+
+const Input = ({
+  onChangeText = () => null,
+  appearance = 'primary',
+  value,
+  style,
+  ...props
+}) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleInputChange = text => {
     onChangeText(text);
   }
 
+  const stainSource = getStainSourceForAppearance(appearance);
+
   return (
     <View style={[styles.wrapper, style]}>
-      <Image source={require('../../assets/images/inputStain1.png')} style={styles.stain}/>
+      <Image source={stainSource} style={styles.stain}/>
       <TextInput
         placeholderTextColor="#8d8d8d"
         onChangeText={handleInputChange}
         value={value}
-        style={[styles.input, isFocused ? styles.focusedState : '']}
+        style={[styles.input, (isFocused || value) ? styles.focusedState : '']}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         {...props}
@@ -52,10 +71,7 @@ const styles = StyleSheet.create({
 
 Input.propTypes = {
   onChangeText: PropTypes.func,
-};
-
-Input.defaultProps = {
-  onChangeText: () => null,
+  appearance: PropTypes.string,
 };
 
 export default Input;

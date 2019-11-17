@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { compact } from 'lodash';
+import { compact, uniq } from 'lodash';
 
 import Wrapper from '../components/Wrapper';
 import Title from '../components/Title';
 import Input from '../components/Input';
+import CtaWrapper from '../components/CtaWrapper';
 import Button from '../components/Button';
 
-const Players = ({ onSubmit }) => {
-  const [names, setNames] = useState(['', '', '', '']);
+const MINIMUM_PLAYERS_COUNT = 4;
+
+const Players = ({ onSubmit, players = [] }) => {
+  const initialNames = players.length ? players : Array(MINIMUM_PLAYERS_COUNT).fill('');
+  const [names, setNames] = useState(initialNames);
+
+  const getValidNames = () =>
+    compact(uniq(names));
+
+  const isFormValid = () => {
+    const validNames = getValidNames();
+    if (validNames.length >= MINIMUM_PLAYERS_COUNT) {
+      return true;
+    }
+    return false;
+  }
 
   const handleChangePlayerName = (name, index) => {
     const newNames = Object.assign([], names, { [index]: name });
@@ -17,51 +32,52 @@ const Players = ({ onSubmit }) => {
   }
 
   handleAddPlayer = () => {
-    setNames([...names, '']);
+    const newPlayer = '';
+    setNames([...names, newPlayer]);
   }
 
-  const isDisabled = () => {
-    const validNames = compact(names);
-    if (validNames.length > 3) {
-      return false;
+  handleSubmit = () => {
+    if (!isFormValid()) {
+      return;
     }
-    return true;
+
+    onSubmit(getValidNames());
   }
 
   return (
     <Wrapper>
       <Title>Players</Title>
-      <ScrollView style={styles.scrollViewWrapper}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollViewWrapper}>
         {names.map((playerName, i) => (
           <Input
             style={styles.inputWrapper}
             placeholder={`Player ${i + 1}`}
+            value={names[i]}
             onChangeText={name => handleChangePlayerName(name, i)}
             key={`player-${i}-name-input`}
+            autoCorrect={false}
           />
         ))}
         <TouchableOpacity style={styles.addButtonWrapper} onPress={handleAddPlayer}>
           <Text style={styles.addButton}>+ Add Player</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Button
-        onPress={() => onSubmit(names)}
-        disabled={isDisabled()}
-      >
-        Next
-      </Button>
+      <CtaWrapper>
+        <Button onPress={handleSubmit} disabled={!isFormValid()}>
+          Next
+        </Button>
+      </CtaWrapper>
     </Wrapper>
   );
 };
 
 const styles = StyleSheet.create({
   scrollViewWrapper: {
-    marginTop: 30,
     flex: 1,
     width: '100%',
   },
   inputWrapper: {
-    marginBottom: 10,
+    marginBottom: 15,
   },
   addButtonWrapper: {
     flex: 1,
@@ -81,6 +97,7 @@ const styles = StyleSheet.create({
 
 Players.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  players: PropTypes.array,
 };
 
 export default Players;

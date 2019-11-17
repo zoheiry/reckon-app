@@ -7,11 +7,13 @@ import Stain1 from './stains/Stain1';
 const getColorForAppearance = (appearance) => {
   switch (appearance) {
     case 'primary':
-      return '#DAFF00';
+      return '#1afb9b';
     case 'secondary':
       return '#CFB4FF';
     case 'warning':
       return '#FD843E';
+    case 'success':
+      return '#1AFB9B';
     default:
       return '#DAFF00';
   }
@@ -23,7 +25,7 @@ const getStylesForSize = (size) => {
       return {
         dimensions: { width: 70, height: 70 },
         text: { fontSize: 16 },
-        border: { borderWidth: 3, borderRadius: 70 / 2, },
+        border: { borderWidth: 4, borderRadius: 70 / 2, },
       }
     case 'md':
       return {
@@ -91,15 +93,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sizeSm: {
-    width: 50,
-    height: 50,
-    borderRadius: 50 / 2,
-    borderWidth: 3,
-  },
   text: {
     fontSize: 24,
-    fontFamily: 'montserrat-bold'
+    fontFamily: 'montserrat-bold',
+    textAlign: 'center',
   },
   disabled: {
     borderColor: '#7E7E7E',
@@ -113,6 +110,7 @@ Button.propTypes = {
     'primary',
     'secondary',
     'warning',
+    'success',
   ]),
   disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,

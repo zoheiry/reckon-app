@@ -16,18 +16,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#daff00',
   },
   text: {
-    fontFamily: 'montserrat-regular',
+    fontFamily: 'montserrat-bold',
     fontSize: 18,
     color: '#000',
-    paddingVertical: 5,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderWidth: 3,
     borderColor: '#fff',
-    borderRadius: 27,
-  },
-  stain: {
-    position: 'absolute',
-    width: '90%',
+    borderRadius: 25,
   },
 });
 
