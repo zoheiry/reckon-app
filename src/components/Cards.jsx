@@ -8,49 +8,42 @@ import Wrapper from './Wrapper';
 import Button from './Button';
 import TimesUp from './TimesUp';
 
-const Turn = ({ words, onEnd, onCorrectWord, onSkipWord }) => {
+const CARD_ANIMATION_DURATION = 1000;
+const ACTION_TYPES = {
+  CORRECT: 'correct',
+  SKIP: 'skip',
+};
+
+const Cards = ({ word, onEnd, onCorrectWord, onSkipWord }) => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [cardAnimationType, setCardAnimationType] = useState(null);
 
+  const { CORRECT, SKIP } = ACTION_TYPES;
+
   const toggleCardAnimationType = (type) => {
     setCardAnimationType(type);
-    setTimeout(() => setCardAnimationType(null), 1000);
+    setTimeout(() => setCardAnimationType(null), CARD_ANIMATION_DURATION);
   }
 
-  const goToNextCard = () => {
-    const nextWordIndex = currentWordIndex + 1;
-    if (nextWordIndex < words.length) {
-      setCurrentWordIndex(nextWordIndex);
-    } else {
-      onEnd();
-    }
+  const handleSkipCard = () => handleNextCard(SKIP);
+
+  const handleCorrectCard = () => handleNextCard(CORRECT);
+
+  const handleNextCard = (actionType) => {
+    // animation still in progress?
+    if (cardAnimationType) return;
+
+    toggleCardAnimationType(actionType);
+
+    setTimeout(() => {
+      if (actionType === CORRECT) {
+        onCorrectWord();
+      } else if (actionType === SKIP) {
+        onSkipWord();
+      }
+    }, CARD_ANIMATION_DURATION - 400);
   }
-
-  const goToPrevCard = () => {
-    const prevCardIndex = currentWordIndex - 1;
-    if (prevCardIndex > -1) {
-      setCurrentWordIndex(prevCardIndex);
-    }
-  }
-
-  const handleSkipCard = () => {
-    const word = words[currentWordIndex];
-    onSkipWord(word);
-
-    toggleCardAnimationType('error');
-
-    setTimeout(goToNextCard, 400);
-  };
-
-  const handleCorrectCard = () => {
-    const word = words[currentWordIndex];
-    onCorrectWord(word);
-
-    toggleCardAnimationType('success');
-
-    setTimeout(goToNextCard, 400);
-  };
 
   const handleTimesUp = () => {
     setIsTimeUp(true);
@@ -66,7 +59,7 @@ const Turn = ({ words, onEnd, onCorrectWord, onSkipWord }) => {
         <View style={styles.content}>
           <Button appearance="warning" onPress={handleSkipCard}>Skip</Button>
           <View style={styles.cardWrapper}>
-            <Card animationType={cardAnimationType}>{words[currentWordIndex]}</Card>
+            <Card animationType={cardAnimationType}>{word}</Card>
           </View>
           <Button appearance="primary" onPress={handleCorrectCard}>YAY! {'\n'} Next</Button>
         </View>
@@ -89,11 +82,11 @@ const styles = StyleSheet.create({
   }
 });
 
-Turn.propTypes = {
-  words: PropTypes.array.isRequired,
+Cards.propTypes = {
+  word: PropTypes.string.isRequired,
   onEnd: PropTypes.func.isRequired,
   onSkipWord: PropTypes.func.isRequired,
   onCorrectWord: PropTypes.func.isRequired,
 };
 
-export default Turn;
+export default Cards;

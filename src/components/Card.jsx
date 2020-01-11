@@ -35,7 +35,7 @@ const Card = ({ children, animationType }) => {
   }, [animationType]);
 
   const backgroundColorStyle = animationType && {
-    backgroundColor: animationType === 'success'
+    backgroundColor: animationType === 'correct'
       ? successBackgroundColorConfig
       : errorBorderColorConfig
   };
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 
 Card.propTypes = {
   children: PropTypes.string.isRequired,
-  animationType: PropTypes.oneOf(['success', 'error']),
+  animationType: PropTypes.oneOf(['correct', 'skip']),
   showAnimation: PropTypes.bool,
 };
 

@@ -10,26 +10,24 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
   useEffect(() => {
     setShouldShowDescription(true);
     setTimeout(() => setShouldShowDescription(false), 6000);
+    
+    // update score and words on a new round but keep currentPlayer the same
+    setRoundState({
+      ...roundState,
+      scores: teams.map(() => 0),
+      remainingWords: shuffle(words),
+    });
   }, [roundNumber]);
 
   const [roundState, setRoundState] = useState({
     remainingWords: shuffle(words),
-    scores: teams.map(_ => 0),
+    scores: teams.map(() => 0),
     currentPlayer: teams[0][0],
   });
 
   const currentTeam = teams.find(team => team.includes(roundState.currentPlayer));
   const currentTeamIndex = teams.indexOf(currentTeam);
   const currentPlayerIndex = currentTeam.indexOf(roundState.currentPlayer);
-
-  const getRemainingWords = (wordsToRemove) => {
-    const newWords = [...roundState.remainingWords];
-    wordsToRemove.forEach(word => {
-      newWords.splice(newWords.indexOf(word), 1);
-    });
-
-    return newWords;
-  }
 
   const getUpdatedScores = (pointsScored = 0) => {
     const teamScore = roundState.scores[currentTeamIndex];
@@ -54,8 +52,7 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
     return nextPlayer;
   }
 
-  const handleTurnEnd = (correctWords = []) => {
-    const remainingWords = getRemainingWords(correctWords);
+  const handleTurnEnd = (correctWords = [], remainingWords = []) => {
     const scores = getUpdatedScores(correctWords.length);
     const currentPlayer = getNextPlayer();
     setRoundState({ remainingWords, scores, currentPlayer });
