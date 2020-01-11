@@ -7,7 +7,7 @@ import Start from '../screens/Start';
 import Players from '../screens/Players';
 import Teams from '../screens/Teams';
 import Words from '../screens/Words';
-import Play from '../screens/Play';
+import Game from '../screens/Game';
 
 import { getNextStep, getPrevStep } from '../utils/steps';
 import { START, PLAYERS, TEAMS, WORDS, PLAY, SCORE, END } from '../constants/appStates';
@@ -74,7 +74,7 @@ const Main = () => {
     case START:
       withBackButton = false;
       // screenComponent = <Start onStart={goToNextStep} />;
-      screenComponent = <Play teams={[['Ali', 'Mariem'], ['Omar', 'Sally']]} words={['Dog', 'Cat', 'Penguin', 'Lion', 'Goerge Clooney', 'Angelina Jolie', 'Gone with the wind', 'Lord of the rings']} />;
+      screenComponent = <Game teams={[['Ali', 'Mariem'], ['Omar', 'Sally']]} words={['Dog', 'Cat', 'Penguin', 'Lion', 'Goerge Clooney', 'Angelina Jolie', 'Gone with the wind', 'Lord of the rings']} />;
       break;
     case PLAYERS:
       screenComponent = <Players onSubmit={handleSubmitPlayers} players={players} />;
@@ -87,7 +87,7 @@ const Main = () => {
       break;
     case PLAY:
       withBackButton = false;
-      screenComponent = <Play teams={teams} words={words} />;
+      screenComponent = <Game teams={teams} words={words} />;
       break;
   }
 

@@ -1,4 +1,4 @@
-import { ANIMALS, CELEBRITIES, MOVIES } from '../constants/CategoryTypes';
+import { ANIMALS, CELEBRITIES, MOVIES } from '../constants/categoryTypes';
 import animalsJson from '../data/animals.json';
 import moviesJson from '../data/movies.json';
 import celebritiesJson from '../data/celebrities.json';

@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import Wrapper from '../components/Wrapper';
-import CtaWrapper from '../components/CtaWrapper';
-import Button from '../components/Button';
+import Wrapper from '../../components/Wrapper';
+import CtaWrapper from '../../components/CtaWrapper';
+import Button from '../../components/Button';
 
 const Start = ({ onStart }) => (
   <Wrapper style={styles.wrapper}>

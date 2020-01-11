@@ -20,7 +20,7 @@ const getStylesForSize = (size) => {
 }
 
 const Title = ({ children, style, size = 'lg' }) =>
-  <Text style={[styles.text, getStylesForSize(size) ,style]}>
+  <Text style={[styles.text, getStylesForSize(size), style]}>
     {children}
   </Text>;
 
@@ -33,8 +33,9 @@ const styles = {
 }
 
 Title.propTypes = {
-  children: PropTypes.string.isRequired,
-  size: PropTypes.oneOf(['sm', 'md', 'lg'])
+  children: PropTypes.node.isRequired,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+
 };
 
 export default Title;

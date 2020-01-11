@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import { Text, StyleSheet } from 'react-native';
 
-const InfoText = ({ children }) => (
-  <Text style={styles.infoText}>{children}</Text>
+const InfoText = ({ children, style }) => (
+  <Text style={[styles.infoText, style]}>{children}</Text>
 );
 
 const styles = StyleSheet.create({

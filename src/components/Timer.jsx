@@ -6,6 +6,7 @@ import { formatCount } from '../utils/Time';
 
 const Timer = ({ startCount = 35, onFinish = () => null }) => {
   const [count, setCount] = useState(startCount);
+  let timeout;
 
   const decrementCounter = () => {
     if (count === 0) {
@@ -16,7 +17,10 @@ const Timer = ({ startCount = 35, onFinish = () => null }) => {
   }
 
   useEffect(() => {
-    setTimeout(decrementCounter, 1000);
+    timeout = setTimeout(decrementCounter, 1000);
+    return () => {
+      clearTimeout(timeout);
+    }
   }, [count]);
 
   const formattedCount = formatCount(count);

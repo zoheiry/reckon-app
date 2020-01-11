@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
-import { shuffle } from 'lodash';
 
 import Timer from '../../components/Timer';
 import Card from '../../components/Card';
 import Wrapper from '../../components/Wrapper';
 import Button from '../../components/Button';
 
-const Cards = ({ words, onFinish }) => {
+const Turn = ({ words, onFinish, onCorrectWord, onSkipWord }) => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [cardAnimationType, setCardAnimationType] = useState(null);
 
@@ -34,12 +33,20 @@ const Cards = ({ words, onFinish }) => {
   }
 
   const handleSkipCard = () => {
+    const word = words[currentWordIndex];
+    onSkipWord(word);
+
     toggleCardAnimationType('error');
+
     setTimeout(goToNextCard, 400);
   };
 
   const handleCorrectCard = () => {
+    const word = words[currentWordIndex];
+    onCorrectWord(word);
+
     toggleCardAnimationType('success');
+
     setTimeout(goToNextCard, 400);
   };
 
@@ -71,9 +78,11 @@ const styles = StyleSheet.create({
   }
 });
 
-Cards.propTypes = {
+Turn.propTypes = {
   words: PropTypes.array.isRequired,
   onFinish: PropTypes.func.isRequired,
+  onSkipWord: PropTypes.func.isRequired,
+  onCorrectWord: PropTypes.func.isRequired,
 };
 
-export default Cards;
+export default Turn;

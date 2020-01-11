@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
 
-import Wrapper from '../../components/Wrapper';
+import Wrapper from './Wrapper';
 
 const INITIAL_COUNT = 3;
 const COUNT_TIMER = 1000;

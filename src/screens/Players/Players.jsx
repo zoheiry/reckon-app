@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { compact, uniq } from 'lodash';
 
-import Wrapper from '../components/Wrapper';
-import Title from '../components/Title';
-import Input from '../components/Input';
-import CtaWrapper from '../components/CtaWrapper';
-import Button from '../components/Button';
+import Wrapper from '../../components/Wrapper';
+import Title from '../../components/Title';
+import Input from '../../components/Input';
+import CtaWrapper from '../../components/CtaWrapper';
+import Button from '../../components/Button';
 
 const MINIMUM_PLAYERS_COUNT = 4;
 
@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
 });
 
 Players.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
   players: PropTypes.array,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default Players;

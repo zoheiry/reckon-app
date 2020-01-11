@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 
-import Wrapper from '../../components/Wrapper';
-import Title from '../../components/Title';
-import InfoText from '../../components/InfoText';
+import Wrapper from './Wrapper';
+import Title from './Title';
+import InfoText from './InfoText';
 
 const getRoundText = (roundNumber) => {
   switch (roundNumber) {

@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-import Input from '../components/Input';
+import Input from './Input';
 import GenerateIcon from '../icons/Generate';
 
-import categoryTypes from '../constants/CategoryTypes';
+import categoryTypes from '../constants/categoryTypes';
 
 import { getRandomWordForCategory } from '../utils/wordGenerator';
 

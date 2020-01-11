@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Text, ScrollView, View, StyleSheet } from 'react-native';
 
-import Wrapper from '../components/Wrapper';
-import Title from '../components/Title';
-import PlayerName from '../components/PlayerName';
-import CtaWrapper from '../components/CtaWrapper';
-import Button from '../components/Button';
-import InfoText from '../components/InfoText';
-import HorizontalScrollView from '../components/HorizontalScrollView';
+import Wrapper from '../../components/Wrapper';
+import Title from '../../components/Title';
+import PlayerName from '../../components/PlayerName';
+import CtaWrapper from '../../components/CtaWrapper';
+import Button from '../../components/Button';
+import InfoText from '../../components/InfoText';
+import HorizontalScrollView from '../../components/HorizontalScrollView';
 
 const getPossibleNumberOfTeams = (numberOfPlayers) =>
   Array(Math.floor(numberOfPlayers / 2) - 1).fill({}).map((_, i) => i + 2);

@@ -2,16 +2,16 @@ import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
-import Wrapper from '../components/Wrapper';
-import Title from '../components/Title';
-import PlayerName from '../components/PlayerName';
-import WordsForm from '../components/WordsForm';
-import CtaWrapper from '../components/CtaWrapper';
-import Button from '../components/Button';
+import Wrapper from '../../components/Wrapper';
+import Title from '../../components/Title';
+import PlayerName from '../../components/PlayerName';
+import WordsForm from '../../components/WordsForm';
+import CtaWrapper from '../../components/CtaWrapper';
+import Button from '../../components/Button';
 
-import { getRandomAnimal, getRandomCelebrity, getRandomMovie } from '../utils/wordGenerator';
+import { getRandomAnimal, getRandomCelebrity, getRandomMovie } from '../../utils/wordGenerator';
 
-import { ANIMALS, MOVIES, CELEBRITIES } from '../constants/CategoryTypes';
+import { ANIMALS, MOVIES, CELEBRITIES } from '../../constants/categoryTypes';
 
 const getInitialPlayerWords = (players) =>
   players.reduce((acc, playerName) => {
