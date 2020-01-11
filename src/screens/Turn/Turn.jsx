@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 import TurnInfo from '../../components/TurnInfo';
 import Cards from '../../components/Cards';
 
+import Scores from '../Scores';
+
 const TurnScreen = ({ player, words, onEnd }) => {
   const [shouldShowTurnInfo, setShouldShowTurnInfo] = useState(true);
+  const [isTurnOver, setIsTurnOver] = useState(false);
   useEffect(() => {
     setShouldShowTurnInfo(true);
   }, [player]);
@@ -20,25 +23,54 @@ const TurnScreen = ({ player, words, onEnd }) => {
   const handleCorrectWord = () => {
     const remainingWords = turnState.remainingWords.slice(1);
     const correctWords = [...turnState.correctWords, currentWord];
+    const skippedWords = [...turnState.skippedWords];
 
-    if (remainingWords.length > 0) {
-      setTurnState({ ...turnState, remainingWords, correctWords });
-    } else {
-      onEnd(correctWords, []);
+    if (turnState.remainingWords.length === turnState.skippedWords.length) {
+      // only skipped words left
+      skippedWords.slice(0);
+    }
+
+    setTurnState({ ...turnState, remainingWords, correctWords, skippedWords });
+
+    if (remainingWords.length === 0) {
+      handleTurnEnd();
     }
   }
 
   const handleSkipWord = () => {
+    const skippedWords = [...turnState.skippedWords];
+    if (turnState.remainingWords.length !== turnState.skippedWords.length) {
+      // only add to skipped words if it wasn't added before.
+      skippedWords.push(currentWord);
+    }
     setTurnState({
       ...turnState,
       // add the skipped words back at the end to be played again.
       remainingWords: [...turnState.remainingWords.slice(1), currentWord],
-      skippedWords: [...turnState.skippedWords, currentWord],
+      skippedWords,
     });
   }
 
   const handleTurnEnd = () => {
-    onEnd(turnState.correctWords, turnState.remainingWords);
+    setIsTurnOver(true);
+  }
+
+  const handleConfirmScore = (correctWords) => {
+    const remainingWords = [...words];
+    correctWords.forEach(word => {  
+      remainingWords.splice(remainingWords.indexOf(word), 1); 
+    });
+    onEnd(correctWords, remainingWords);
+  } 
+
+  if (isTurnOver) {
+    return (
+      <Scores
+        correctWords={turnState.correctWords}
+        skippedWords={turnState.skippedWords}
+        onConfirm={handleConfirmScore}
+      />
+    );
   }
 
   return (

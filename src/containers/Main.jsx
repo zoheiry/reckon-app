@@ -8,9 +8,10 @@ import Players from '../screens/Players';
 import Teams from '../screens/Teams';
 import Words from '../screens/Words';
 import Game from '../screens/Game';
+import Scores from '../screens/Scores';
 
 import { getNextStep, getPrevStep } from '../utils/steps';
-import { START, PLAYERS, TEAMS, WORDS, PLAY, SCORE, END } from '../constants/appStates';
+import { START, PLAYERS, TEAMS, WORDS, GAME, SCORE, END } from '../constants/appStates';
 
 // const INITIAL_ORIENTATION = ScreenOrientation.OrientationLock.PORTRAIT;
 const INITIAL_ORIENTATION = ScreenOrientation.OrientationLock.LANDSCAPE;
@@ -75,6 +76,7 @@ const Main = () => {
       withBackButton = false;
       // screenComponent = <Start onStart={goToNextStep} />;
       screenComponent = <Game teams={[['Ali', 'Mariem'], ['Omar', 'Sally']]} words={['Dog', 'Cat', 'Penguin', 'Lion', 'Goerge Clooney', 'Angelina Jolie', 'Gone with the wind', 'Lord of the rings']} />;
+      // screenComponent = <Scores correctWords={['Dog', 'Cat', 'Penguin', 'Lion', 'Goerge Clooney']} skippedWords={['Angelina Jolie', 'Gone with the wind', 'Lord of the rings']} onConfirm={() => null} />;
       break;
     case PLAYERS:
       screenComponent = <Players onSubmit={handleSubmitPlayers} players={players} />;
@@ -85,7 +87,7 @@ const Main = () => {
     case WORDS:
       screenComponent = <Words players={players} onSubmit={handleSubmitWords} />;
       break;
-    case PLAY:
+    case GAME:
       withBackButton = false;
       screenComponent = <Game teams={teams} words={words} />;
       break;

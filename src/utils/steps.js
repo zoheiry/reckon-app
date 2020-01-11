@@ -1,6 +1,6 @@
-import { START, PLAYERS, TEAMS, WORDS, PLAY, SCORE, END } from '../constants/appStates';
+import { START, PLAYERS, TEAMS, WORDS, GAME, SCORE, END } from '../constants/appStates';
 
-const STEPS_IN_ORDER = [START, PLAYERS, TEAMS, WORDS, PLAY, SCORE, END];
+const STEPS_IN_ORDER = [START, PLAYERS, TEAMS, WORDS, GAME, SCORE, END];
 
 const isValidStep = (step) => {
   if (STEPS_IN_ORDER.includes(step)) {

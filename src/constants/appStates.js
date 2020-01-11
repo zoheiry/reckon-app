@@ -2,7 +2,7 @@ export const START = 'Start';
 export const PLAYERS = 'Players';
 export const TEAMS = 'Teams';
 export const WORDS = 'Words';
-export const PLAY = 'Play';
+export const GAME = 'Game';
 export const SCORE = 'Score';
 export const END = 'End';
 
@@ -11,7 +11,7 @@ export default {
   PLAYERS,
   TEAMS,
   WORDS,
-  PLAY,
+  GAME,
   SCORE,
   END,
 };

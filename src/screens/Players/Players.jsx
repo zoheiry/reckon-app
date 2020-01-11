@@ -15,8 +15,7 @@ const Players = ({ onSubmit, players = [] }) => {
   const initialNames = players.length ? players : Array(MINIMUM_PLAYERS_COUNT).fill('');
   const [names, setNames] = useState(initialNames);
 
-  const getValidNames = () =>
-    compact(uniq(names));
+  const getValidNames = () => compact(uniq(names));
 
   const isFormValid = () => {
     const validNames = getValidNames();
