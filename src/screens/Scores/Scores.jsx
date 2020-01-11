@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import CtaWrapper from '../../components/CtaWrapper';
 import ToggleButton from '../../components/ToggleButton';
 
-const addStateToWords = (words, state) => words.map(word => ({ word, state }));
+const addStateToWords = (words, state) => words.map(word => ({ ...word, state }));
 
 const Scores = ({ correctWords, skippedWords, onConfirm }) => {
   useEffect(() => {
@@ -25,7 +25,7 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
     const words = [...wordsWithStates];
     const wordWithState = words[wordIndex];
     words[wordIndex] = {
-      word: wordWithState.word,
+      ...wordWithState,
       state: wordWithState.state === 'correct' ? 'skipped' : 'correct',
     };
 
@@ -35,13 +35,14 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
   const handleConfrim = () => {
     const correctWords = [];
     const skippedWords = [];
-    wordsWithStates.forEach(({ word, state}) => {
+    wordsWithStates.forEach(({ state, ...word }) => {
       if (state === 'correct') {
         correctWords.push(word);
       } else {
         skippedWords.push(word);
       }
     });
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     onConfirm(correctWords, skippedWords);
   }
 
@@ -55,9 +56,9 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
           <Title size="md" style={styles.currentScore}>
             {correctWordsLength}/{wordsWithStates.length}
           </Title>
-          {wordsWithStates.map(({ word, state }, i) => (
-            <View key={`${word}-${i}`} style={styles.scoreWithState}>
-              <Text style={styles.word}>{word}</Text>
+          {wordsWithStates.map(({ label, state, id }, i) => (
+            <View key={`word-${id}`} style={styles.scoreWithState}>
+              <Text style={styles.word}>{label}</Text>
               <ToggleButton
                 state={state === 'correct' ? 'on' : 'off'}
                 onPress={() => toggleWordState(i)}
@@ -67,7 +68,7 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
         </View>
       </ScrollView>
       <CtaWrapper>
-        <Button appearance="primary" onPress={onConfirm}>Accept Score</Button>
+        <Button appearance="primary" onPress={handleConfrim}>Accept Score</Button>
       </CtaWrapper>
     </Wrapper>
   );
@@ -101,8 +102,14 @@ const styles = StyleSheet.create({
 });
 
 Scores.propTypes = {
-  correctWords: PropTypes.array,
-  skippedWords: PropTypes.array,
+  correctWords: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  })).isRequired,
+  skippedWords: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  })).isRequired,
   onConfirm: PropTypes.func.isRequired,
 };
 

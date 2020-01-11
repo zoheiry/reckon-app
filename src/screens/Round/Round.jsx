@@ -78,7 +78,10 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
 Round.propTypes = {
   roundNumber: PropTypes.number.isRequired,
   teams: PropTypes.array.isRequired,
-  words: PropTypes.array.isRequired,
+  words: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  })).isRequired,
   onEnd: PropTypes.func.isRequired,
 };
 

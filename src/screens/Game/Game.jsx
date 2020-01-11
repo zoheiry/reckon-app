@@ -4,6 +4,8 @@ import { ScreenOrientation } from 'expo';
 
 import Round from '../Round';
 
+const addIdToWords = (words) => words.map((word, i) => ({id: `w${i}`, label: word}));
+
 const Game = ({ teams, words }) => {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
@@ -35,7 +37,7 @@ const Game = ({ teams, words }) => {
     <Round
       roundNumber={roundNumber}
       teams={teams}
-      words={words}
+      words={addIdToWords(words)}
       onEnd={handleRoundEnd}
     />
   );
