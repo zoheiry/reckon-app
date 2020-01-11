@@ -9,23 +9,23 @@ import Button from '../../components/Button';
 import CtaWrapper from '../../components/CtaWrapper';
 import ToggleButton from '../../components/ToggleButton';
 
-const addStateToWords = (words, state) => words.map(word => ({ ...word, state }));
+const addStateToWords = (wordIds, state) => wordIds.map(id => ({ id, state }));
 
-const Scores = ({ correctWords, skippedWords, onConfirm }) => {
+const Scores = ({ correctWordIds, skippedWordIds, wordsById, onConfirm }) => {
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }, []);
 
   const [wordsWithStates, setWordsStates] = useState([
-    ...addStateToWords(correctWords, 'correct'),
-    ...addStateToWords(skippedWords, 'skipped'),
+    ...addStateToWords(correctWordIds, 'correct'),
+    ...addStateToWords(skippedWordIds, 'skipped'),
   ]);
 
   const toggleWordState = (wordIndex) => {
     const words = [...wordsWithStates];
     const wordWithState = words[wordIndex];
     words[wordIndex] = {
-      ...wordWithState,
+      id: wordWithState.id,
       state: wordWithState.state === 'correct' ? 'skipped' : 'correct',
     };
 
@@ -33,17 +33,17 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
   }
 
   const handleConfrim = () => {
-    const correctWords = [];
-    const skippedWords = [];
-    wordsWithStates.forEach(({ state, ...word }) => {
+    const correctWordIds = [];
+    const skippedWordIds = [];
+    wordsWithStates.forEach(({ state, id }) => {
       if (state === 'correct') {
-        correctWords.push(word);
+        correctWordIds.push(id);
       } else {
-        skippedWords.push(word);
+        skippedWordIds.push(id);
       }
     });
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    onConfirm(correctWords, skippedWords);
+    onConfirm(correctWordIds, skippedWordIds);
   }
 
   const correctWordsLength = wordsWithStates.filter(({ state }) => state === 'correct').length;
@@ -56,9 +56,9 @@ const Scores = ({ correctWords, skippedWords, onConfirm }) => {
           <Title size="md" style={styles.currentScore}>
             {correctWordsLength}/{wordsWithStates.length}
           </Title>
-          {wordsWithStates.map(({ label, state, id }, i) => (
+          {wordsWithStates.map(({ state, id }, i) => (
             <View key={`word-${id}`} style={styles.scoreWithState}>
-              <Text style={styles.word}>{label}</Text>
+              <Text style={styles.word}>{wordsById[id]}</Text>
               <ToggleButton
                 state={state === 'correct' ? 'on' : 'off'}
                 onPress={() => toggleWordState(i)}
@@ -102,14 +102,9 @@ const styles = StyleSheet.create({
 });
 
 Scores.propTypes = {
-  correctWords: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
-  skippedWords: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
+  correctWordIds: PropTypes.array.isRequired,
+  skippedWordIds: PropTypes.array.isRequired,
+  wordsById: PropTypes.object.isRequired,
   onConfirm: PropTypes.func.isRequired,
 };
 

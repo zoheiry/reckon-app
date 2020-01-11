@@ -4,7 +4,10 @@ import { ScreenOrientation } from 'expo';
 
 import Round from '../Round';
 
-const addIdToWords = (words) => words.map((word, i) => ({id: `w${i}`, label: word}));
+const getWordsById = (words) => words.reduce((wordsMap, word, i) => ({
+  ...wordsMap,
+  [`w${i}`]: word,
+}), {});
 
 const Game = ({ teams, words }) => {
   useEffect(() => {
@@ -37,7 +40,7 @@ const Game = ({ teams, words }) => {
     <Round
       roundNumber={roundNumber}
       teams={teams}
-      words={addIdToWords(words)}
+      wordsById={getWordsById(words)}
       onEnd={handleRoundEnd}
     />
   );

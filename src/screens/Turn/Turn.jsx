@@ -1,49 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty, omit } from 'lodash';
 
 import TurnInfo from '../../components/TurnInfo';
 import Cards from '../../components/Cards';
 
 import Scores from '../Scores';
 
-const TurnScreen = ({ player, words, onEnd }) => {
+const TurnScreen = ({ player, wordsById, onEnd }) => {
   const [shouldShowTurnInfo, setShouldShowTurnInfo] = useState(true);
   const [isTurnOver, setIsTurnOver] = useState(false);
   // TODO: check if this effect is need or if changing the player prop already sets turnInfo to true
-  useEffect(() => { setShouldShowTurnInfo(true) }, [player]);
+  useEffect(() => {
+    setIsTurnOver(false);
+    setShouldShowTurnInfo(true);
+  }, [player]);
 
   const [turnState, setTurnState] = useState({
-    remainingWords: words,
-    correctWords: [],
-    skippedWords: [],
+    remainingWordIds: Object.keys(wordsById),
+    correctWordIds: [],
+    skippedWordIds: [],
   });
   useEffect(() => {
-    if (turnState.remainingWords.length === 0) {
+    if (isEmpty(turnState.remainingWordIds)) {
       handleTurnEnd();
     }
-  }, [turnState.remainingWords]);
-  const currentWord = turnState.remainingWords[0] || {};
+  }, [turnState.remainingWordIds]);
+  const currentWordId = turnState.remainingWordIds[0];
 
   const handleCorrectWord = () => {
-    const remainingWords = turnState.remainingWords.slice(1);
-    const correctWords = [...turnState.correctWords, currentWord];
+    const remainingWordIds = turnState.remainingWordIds.slice(1);
+    const correctWordIds = [...turnState.correctWordIds, currentWordId];
     // remove from skipped words if it was there.
-    const skippedWords = turnState.skippedWords.filter(({ id }) => id !== currentWord.id);
+    const skippedWordIds = turnState.skippedWordIds.filter(id => id !== currentWordId);
 
-    setTurnState({ ...turnState, remainingWords, correctWords, skippedWords });
+    setTurnState({ remainingWordIds, correctWordIds, skippedWordIds });
   }
 
   const handleSkipWord = () => {
-    const skippedWords = [...turnState.skippedWords];
-    if (!skippedWords.find(({ id }) => id === currentWord.id)) {
+    const skippedWordIds = [...turnState.skippedWordIds];
+    if (!skippedWordIds.includes(currentWordId)) {
       // only add to skipped words if it wasn't added before.
-      skippedWords.push(currentWord);
+      skippedWordIds.push(currentWordId);
     }
     setTurnState({
       ...turnState,
       // add the skipped words back at the end to be played again.
-      remainingWords: [...turnState.remainingWords.slice(1), currentWord],
-      skippedWords,
+      remainingWordIds: [...turnState.remainingWordIds.slice(1), currentWordId],
+      skippedWordIds,
     });
   }
 
@@ -51,17 +55,18 @@ const TurnScreen = ({ player, words, onEnd }) => {
     setIsTurnOver(true);
   }
 
-  const handleConfirmScore = (correctWords) => {
-    const correctWordIds = correctWords.map((word) => word.id);
-    const remainingWords = words.filter(({ id }) => !correctWordIds.includes(id));
-    onEnd(correctWords, remainingWords);
+  const handleConfirmScore = (correctWordIds) => {
+    const remainingWordsById = omit(wordsById, correctWordIds);
+    const points = correctWordIds.length;
+    onEnd(points, remainingWordsById);
   } 
 
   if (isTurnOver) {
     return (
       <Scores
-        correctWords={turnState.correctWords}
-        skippedWords={turnState.skippedWords}
+        correctWordIds={turnState.correctWordIds}
+        skippedWordIds={turnState.skippedWordIds}
+        wordsById={wordsById}
         onConfirm={handleConfirmScore}
       />
     );
@@ -72,7 +77,7 @@ const TurnScreen = ({ player, words, onEnd }) => {
       <TurnInfo currentPlayer={player} onReady={() => setShouldShowTurnInfo(false)} />
     ): (
       <Cards
-        word={currentWord.label}
+        word={wordsById[currentWordId]}
         onCorrectWord={handleCorrectWord}
         onSkipWord={handleSkipWord}
         onEnd={handleTurnEnd}
@@ -83,10 +88,7 @@ const TurnScreen = ({ player, words, onEnd }) => {
 
 TurnScreen.propTypes = {
   player: PropTypes.string.isRequired,
-  words: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
+  wordsById: PropTypes.object.isRequired,
   onEnd: PropTypes.func.isRequired,
 };
 

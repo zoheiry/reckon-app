@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { shuffle } from 'lodash';
+import { shuffle, isEmpty } from 'lodash';
 
 import Turn from '../Turn';
 import RoundDescription from '../../components/RoundDescription';
 
-const Round = ({ roundNumber, teams, words, onEnd }) => {
+const shuffleWords = (wordsById) => {
+  const wordIds = shuffle(Object.keys(wordsById));
+  return wordIds.reduce((acc, wordId) => ({ ...acc, [wordId]: wordsById[wordId] }), {});
+};
+
+const Round = ({ roundNumber, teams, wordsById, onEnd }) => {
   const [shouldShowDescription, setShouldShowDescription] = useState(true);
   useEffect(() => {
     setShouldShowDescription(true);
     setTimeout(() => setShouldShowDescription(false), 6000);
-    
     // update score and words on a new round but keep currentPlayer the same
     setRoundState({
       ...roundState,
       scores: teams.map(() => 0),
-      remainingWords: shuffle(words),
+      remainingWordsById: shuffleWords(wordsById),
     });
   }, [roundNumber]);
 
   const [roundState, setRoundState] = useState({
-    remainingWords: shuffle(words),
+    remainingWordsById: shuffleWords(wordsById),
     scores: teams.map(() => 0),
     currentPlayer: teams[0][0],
   });
@@ -52,13 +56,13 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
     return nextPlayer;
   }
 
-  const handleTurnEnd = (correctWords = [], remainingWords = []) => {
-    const scores = getUpdatedScores(correctWords.length);
-    const currentPlayer = getNextPlayer();
-    setRoundState({ remainingWords, scores, currentPlayer });
-
-    if (remainingWords.length <= 0) {
+  const handleTurnEnd = (pointsScored = 0, remainingWordsById) => {
+    const scores = getUpdatedScores(pointsScored);
+    if (isEmpty(remainingWordsById)) {
       onEnd(scores);
+    } else {
+      const currentPlayer = getNextPlayer();
+      setRoundState({ remainingWordsById, scores, currentPlayer });
     }
   }
 
@@ -68,7 +72,7 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
     ) : (
       <Turn
         player={roundState.currentPlayer}
-        words={roundState.remainingWords}
+        wordsById={roundState.remainingWordsById}
         onEnd={handleTurnEnd}
       />
     )
@@ -78,10 +82,7 @@ const Round = ({ roundNumber, teams, words, onEnd }) => {
 Round.propTypes = {
   roundNumber: PropTypes.number.isRequired,
   teams: PropTypes.array.isRequired,
-  words: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
+  wordsById: PropTypes.object.isRequired,
   onEnd: PropTypes.func.isRequired,
 };
 
