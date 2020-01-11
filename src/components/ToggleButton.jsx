@@ -2,20 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import StainOn from './stains/StainOn';
-import StainOff from './stains/StainOff';
-
 const ToggleButton = ({ state = 'on', onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.wrapper}>
-        <View style={[styles.slider, state === 'on' ? styles.sliderOn : styles.sliderOff]}>
-          {state === 'on' ? (
-            <StainOn />
-          ) : (
-            <StainOff />
-          )}
-        </View>
+        <View style={[styles.slider, state === 'on' ? styles.sliderOn : styles.sliderOff]} />
       </View>
     </TouchableOpacity>
   );
@@ -36,12 +27,13 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 35 / 2,
     top: -3,
-    backgroundColor: 'transparent',
   },
   sliderOn: {
+    backgroundColor: '#1AFB9B',
     right: -3,
   },
   sliderOff: {
+    backgroundColor: '#FD843E',
     left: -3,
   }
 });
